@@ -28,9 +28,9 @@ namespace ComputerGraphics_Rasterization.RenderLogic
 
         }
 
-        private static void DrawThickPixel(object rasterizer, int x0, int y0, Color color, int thickness)
+        private static void DrawThickPixel(CanvasRenderer renderer, int x, int y, Color color, int thickness)
         {
-            throw new NotImplementedException();
+            renderer.SetPixel(x, y, color);
         }
     }
 }
