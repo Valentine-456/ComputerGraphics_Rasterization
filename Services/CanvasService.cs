@@ -12,13 +12,14 @@ namespace ComputerGraphics_Rasterization.Services
     {
         public List<IShape> Shapes { get; private set; } = new List<IShape>();
         private CanvasRenderer Renderer;
+        private uint currentZIndex = 0;
 
         public CanvasService(CanvasRenderer renderer)
         {
             Renderer = renderer;
         }
 
-        void AddShape(IShape shape)
+        public void AddShape(IShape shape)
         {
             Shapes.Add(shape);
         }
@@ -37,6 +38,12 @@ namespace ComputerGraphics_Rasterization.Services
         public IShape FindShapeAt(int x, int y)
         {
             return Shapes.LastOrDefault(shape => shape.IsTargeted(x, y));
+        }
+
+        public void ClearCanvas()
+        {
+            Shapes.Clear();
+            Renderer.ClearCanvas();
         }
     }
 }

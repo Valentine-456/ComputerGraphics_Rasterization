@@ -28,7 +28,7 @@
             <MenuItem Header="Edit">
                 <MenuItem Header="Undo"/>
                 <MenuItem Header="Redo"/>
-                <MenuItem Header="Clear All"/>
+                <MenuItem Header="Clear All" Click="ClearAll_Click"/>
             </MenuItem>
             <MenuItem Header="View">
                 <MenuItem Header="Toggle Antialiasing"/>
@@ -40,9 +40,14 @@
         </ContentControl>
 
         <ScrollViewer Grid.Row="1" Grid.Column="1" Background="White">
-            <Canvas x:Name="DrawingCanvas" Background="White"
-                    />
+            <Image x:Name="DrawingSurface"
+           MouseLeftButtonDown="OnCanvasMouseLeftButtonDown"
+           MouseMove="OnCanvasMouseMove"
+           MouseLeftButtonUp="OnCanvasMouseLeftButtonUp"
+           Stretch="None"
+           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
         </ScrollViewer>
+
 
         <Grid Grid.Row="1" Grid.Column="2" Background="#EEE">
             <Grid.RowDefinitions>

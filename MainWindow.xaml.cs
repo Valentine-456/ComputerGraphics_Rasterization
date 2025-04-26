@@ -1,4 +1,7 @@
-﻿using System;
+﻿using ComputerGraphics_Rasterization.RenderLogic;
+using ComputerGraphics_Rasterization.Services;
+using ComputerGraphics_Rasterization.Shapes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +23,85 @@ namespace ComputerGraphics_Rasterization
     /// </summary>
     public partial class MainWindow : Window
     {
+        private WriteableBitmap bitmap;
+        private CanvasService canvasService;
+
+        private bool isDrawing = false;
+        private IShape currentShape = null;
+
         public MainWindow()
         {
             InitializeComponent();
+            InitializeCanvas();
+        }
+
+        private void InitializeCanvas()
+        {
+            int width = 1000;
+            int height = 1000;
+            bitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgra32, null);
+            DrawingSurface.Source = bitmap;
+
+            CanvasRenderer canvasRenderer = new CanvasRenderer(bitmap);
+            canvasService = new CanvasService(canvasRenderer);
+        }
+
+        private void OnCanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Point click = e.GetPosition(DrawingSurface);
+
+            if (currentShape == null)
+            {
+                currentShape = new LineShape((int)click.X, (int)click.Y, (int)click.X, (int)click.Y, Colors.Black, 1);
+            }
+            else
+            {
+                if (currentShape is LineShape line)
+                {
+                    line.X1 = (int)click.X;
+                    line.Y1 = (int)click.Y;
+                }
+                canvasService.AddShape(currentShape);
+                currentShape = null;
+                RedrawCanvas();
+            }
+        }
+
+        private void OnCanvasMouseMove(object sender, MouseEventArgs e)
+        {
+            if (currentShape != null)
+            {
+                Point move = e.GetPosition(DrawingSurface);
+
+                if (currentShape is LineShape line)
+                {
+                    line.X1 = (int)move.X;
+                    line.Y1 = (int)move.Y;
+                }
+                RedrawCanvas();
+            }
+        }
+
+        private void OnCanvasMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            // optional logic if needed
+        }
+
+
+        private void RedrawCanvas()
+        {
+            
+            canvasService.DrawAll();
+
+            //if (currentShape != null)
+            //{
+             //   currentShape.Draw(canvasRenderer);
+            //}
+        }
+
+        private void ClearAll_Click(object sender, RoutedEventArgs e)
+        {
+            canvasService.ClearCanvas();
         }
     }
 }
