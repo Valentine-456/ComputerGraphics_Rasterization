@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="ComputerGraphics_Rasterization.Controls.LineTooltab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ComputerGraphics_Rasterization.Controls"
+             mc:Ignorable="d" 
+             Height="Auto" Width="Auto">
+    <StackPanel Margin="10">
+        <TextBlock Text="Line Tool" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
+
+        <TextBlock Text="Start Point:"/>
+        <TextBlock x:Name="StartPointTextBlock" Margin="0,0,0,10"/>
+
+        <TextBlock Text="End Point:"/>
+        <TextBlock x:Name="EndPointTextBlock" Margin="0,0,0,10"/>
+
+        <TextBlock Text="Thickness:"/>
+        <TextBlock x:Name="ThicknessTextBlock" Margin="0,0,0,10"/>
+        <Slider x:Name="ThicknessSlider" Minimum="1" Maximum="20" Value="1" TickFrequency="1" 
+                IsSnapToTickEnabled="True" Margin="0,0,0,10"/>
+
+        <Button Content="Delete Selected Line" x:Name="DeleteButton" Margin="0,10,0,0"/>
+    </StackPanel>
+</UserControl>

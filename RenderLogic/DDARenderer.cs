@@ -28,9 +28,21 @@ namespace ComputerGraphics_Rasterization.RenderLogic
 
         }
 
-        private static void DrawThickPixel(CanvasRenderer renderer, int x, int y, Color color, int thickness)
+        private static void DrawThickPixel(CanvasRenderer renderer, int xCenter, int yCenter, Color color, int thickness)
         {
-            renderer.SetPixel(x, y, color);
+            int radius = thickness / 2;
+            for (int x = -radius; x <= radius; x++)
+            {
+                for (int y = -radius; y <= radius; y++)
+                {
+                    if (x * x + y * y <= radius * radius)
+                    {
+                        renderer.SetPixel(xCenter + x, yCenter + y, color);
+                    }
+                }
+            }
         }
+
+
     }
 }

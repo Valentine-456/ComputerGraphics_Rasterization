@@ -21,6 +21,7 @@ namespace ComputerGraphics_Rasterization.Services
 
         public void AddShape(IShape shape)
         {
+            shape.ZIndex = currentZIndex++;
             Shapes.Add(shape);
         }
 
@@ -37,7 +38,7 @@ namespace ComputerGraphics_Rasterization.Services
 
         public IShape FindShapeAt(int x, int y)
         {
-            return Shapes.LastOrDefault(shape => shape.IsTargeted(x, y));
+            return Shapes.Last(shape => shape.IsTargeted(x, y));
         }
 
         public void ClearCanvas()

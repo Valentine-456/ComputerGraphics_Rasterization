@@ -26,9 +26,10 @@
                 <MenuItem Header="Exit"/>
             </MenuItem>
             <MenuItem Header="Edit">
-                <MenuItem Header="Undo"/>
-                <MenuItem Header="Redo"/>
                 <MenuItem Header="Clear All" Click="ClearAll_Click"/>
+            </MenuItem>
+            <MenuItem Header="Tools">
+                <MenuItem Header="Line" Click="LineTooltab_Click"/>
             </MenuItem>
             <MenuItem Header="View">
                 <MenuItem Header="Toggle Antialiasing"/>
@@ -41,11 +42,12 @@
 
         <ScrollViewer Grid.Row="1" Grid.Column="1" Background="White">
             <Image x:Name="DrawingSurface"
-           MouseLeftButtonDown="OnCanvasMouseLeftButtonDown"
-           MouseMove="OnCanvasMouseMove"
-           MouseLeftButtonUp="OnCanvasMouseLeftButtonUp"
-           Stretch="None"
-           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                   MouseLeftButtonDown="OnCanvasMouseLeftButtonDown"
+                   MouseRightButtonDown="OnCanvasMouseRightButtonDown"
+                   MouseMove="OnCanvasMouseMove"
+                   MouseLeftButtonUp="OnCanvasMouseLeftButtonUp"
+                   Stretch="None"
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
         </ScrollViewer>
 
 
@@ -54,8 +56,9 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Text="History" FontWeight="Bold" Grid.Row="0"/>
-            <ListBox x:Name="FilterHistoryList" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+            <TextBlock Text="Shapes" FontWeight="Bold" Grid.Row="0"/>
+            <ListBox x:Name="ShapesListBox" Grid.Row="1" SelectionChanged="OnShapeSelected" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+
         </Grid>
 
     </Grid>
