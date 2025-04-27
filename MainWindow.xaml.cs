@@ -3,6 +3,7 @@ using ComputerGraphics_Rasterization.Controls.Events;
 using ComputerGraphics_Rasterization.RenderLogic;
 using ComputerGraphics_Rasterization.Services;
 using ComputerGraphics_Rasterization.Shapes;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,11 +29,11 @@ namespace ComputerGraphics_Rasterization
         private WriteableBitmap bitmap;
         private CanvasService canvasService;
         private DrawingService drawingService;
+        private FileOperationsService fileService = new FileOperationsService();
 
         private IShape selectedShape = null;
         private int? draggingHandleId = null;
         private Point? lastDragPoint = null;
-
 
         private LineTooltab _lineTooltab = null;
         private CircleTooltab _circleTooltab = null;
@@ -54,6 +55,36 @@ namespace ComputerGraphics_Rasterization
             CanvasRenderer canvasRenderer = new CanvasRenderer(bitmap);
             canvasService = new CanvasService(canvasRenderer);
             drawingService = new DrawingService(canvasService);
+        }
+
+        private void SaveFile_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "JSON files (*.json)|*.json";
+            saveFileDialog.DefaultExt = "json";
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                fileService.SaveToFile(saveFileDialog.FileName, canvasService.Shapes);
+            }
+        }
+
+        private void OpenFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "JSON files (*.json)|*.json";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                var loadedShapes = fileService.LoadFromFile(openFileDialog.FileName);
+                canvasService.ClearCanvas();
+                canvasService.Shapes.AddRange(loadedShapes);
+                UpdateShapesList();
+                canvasService.DrawAll();
+            }
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
 
         private void LineTooltab_Click(object sender, RoutedEventArgs e)
