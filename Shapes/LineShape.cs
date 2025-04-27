@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace ComputerGraphics_Rasterization.Shapes
 {
-    internal class LineShape : IShape
+    internal class LineShape : IMovableShape
     {
         public uint ZIndex { get; set; }
 
@@ -54,5 +54,35 @@ namespace ComputerGraphics_Rasterization.Shapes
             return $"Line Z-Index: {ZIndex}";
         }
 
+        public void MoveEntireFigure(int dx, int dy)
+        {
+            X0 += dx;
+            Y0 += dy;
+            X1 += dx;
+            Y1 += dy;
+        }
+
+        public int? FindClosestHandle(int x, int y)
+        {
+            double distStart = Math.Sqrt((x - X0) * (x - X0) + (y - Y0) * (y - Y0));
+            double distEnd = Math.Sqrt((x - X1) * (x - X1) + (y - Y1) * (y - Y1));
+            if ((distStart > 10) && (distEnd > 10))
+                return null;
+            return distStart < distEnd ? 0 : 1;
+        }
+
+        public void MoveHandle(int handleId, int newX, int newY)
+        {
+            if (handleId == 0)
+            {
+                X0 = newX;
+                Y0 = newY;
+            }
+            else
+            {
+                X1 = newX;
+                Y1 = newY;
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ComputerGraphics_Rasterization.Controls;
+using ComputerGraphics_Rasterization.Controls.Events;
 using ComputerGraphics_Rasterization.RenderLogic;
 using ComputerGraphics_Rasterization.Services;
 using ComputerGraphics_Rasterization.Shapes;
@@ -30,6 +31,9 @@ namespace ComputerGraphics_Rasterization
         private bool isDrawing = false;
         private IShape currentShape = null;
         private IShape selectedShape = null;
+        private int? draggingHandleId = null;
+        private Point? lastDragPoint = null;
+
 
         private LineTooltab _lineTooltab = null;
 
@@ -55,6 +59,7 @@ namespace ComputerGraphics_Rasterization
         {
             _lineTooltab = new LineTooltab();
             _lineTooltab.DeleteButton.Click += OnDeleteSelectedLineClicked;
+            _lineTooltab.LineShapeUpdated += OnLineShapeUpdated;
             ToolTab.Content = _lineTooltab;
         }
 
@@ -62,12 +67,12 @@ namespace ComputerGraphics_Rasterization
         {
             Point click = e.GetPosition(DrawingSurface);
 
-            if (currentShape == null && selectedShape == null)
+            if (currentShape == null)
             {
                 int thickness = _lineTooltab?.SelectedThickness ?? 1;
                 currentShape = new LineShape((int)click.X, (int)click.Y, (int)click.X, (int)click.Y, Colors.Black, thickness);
             }
-            else if (currentShape != null)
+            else
             {
                 if (currentShape is LineShape line)
                 {
@@ -81,32 +86,49 @@ namespace ComputerGraphics_Rasterization
             }
         }
 
-        private void OnCanvasMouseMove(object sender, MouseEventArgs e)
-        {
-            if (currentShape != null && e.LeftButton == MouseButtonState.Pressed)
-            {
-                Point move = e.GetPosition(DrawingSurface);
-
-                if (currentShape is LineShape line)
-                {
-                    line.X1 = (int)move.X;
-                    line.Y1 = (int)move.Y;
-                }
-                canvasService.DrawAll();
-            }
-        }
-
-        private void OnCanvasMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            // optional logic if needed
-        }
-
         private void OnCanvasMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             Point click = e.GetPosition(DrawingSurface);
             selectedShape = canvasService.FindShapeAt((int)click.X, (int)click.Y);
 
+            if (selectedShape is IMovableShape movable)
+            {
+                draggingHandleId = movable.FindClosestHandle((int)click.X, (int)click.Y);
+                lastDragPoint = click;
+            }
+
             UpdateLineTooltab();
+        }
+
+        private void OnCanvasMouseMove(object sender, MouseEventArgs e)
+        {
+            Point move = e.GetPosition(DrawingSurface);
+
+            if (selectedShape != null && e.RightButton == MouseButtonState.Pressed && selectedShape is IMovableShape movable)
+            {
+                if (draggingHandleId.HasValue)
+                {
+                    movable.MoveHandle(draggingHandleId.Value, (int)move.X, (int)move.Y);
+                }
+                else if (lastDragPoint.HasValue)
+                {
+                    int dx = (int)(move.X - lastDragPoint.Value.X);
+                    int dy = (int)(move.Y - lastDragPoint.Value.Y);
+                    movable.MoveEntireFigure(dx, dy);
+                    lastDragPoint = move;
+                }
+                canvasService.DrawAll();
+            }
+        }
+
+        private void OnCanvasMouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (selectedShape != null)
+            {
+                UpdateLineTooltab();
+            }
+            draggingHandleId = null;
+            lastDragPoint = null;
         }
 
         private void ClearAll_Click(object sender, RoutedEventArgs e)
@@ -124,6 +146,7 @@ namespace ComputerGraphics_Rasterization
             {
                 canvasService.RemoveShape(selectedShape);
                 UpdateShapesList();
+                _lineTooltab.ClearValues();
                 canvasService.DrawAll();
                 selectedShape = null;
             }
@@ -144,6 +167,31 @@ namespace ComputerGraphics_Rasterization
             }
         }
 
+        private void OnLineShapeUpdated(object sender, LineShapeUpdatedEventArgs e)
+        {
+            if (selectedShape is LineShape line)
+            {
+                if (e.Thickness.HasValue)
+                    line.Thickness = e.Thickness.Value;
+
+                if (e.X0.HasValue)
+                    line.X0 = e.X0.Value;
+
+                if (e.Y0.HasValue)
+                    line.Y0 = e.Y0.Value;
+
+                if (e.X1.HasValue)
+                    line.X1 = e.X1.Value;
+
+                if (e.Y1.HasValue)
+                    line.Y1 = e.Y1.Value;
+
+                if (e.Color.HasValue)
+                    line.Color = e.Color.Value;
+
+                canvasService.DrawAll();
+            }
+        }
 
         private void UpdateShapesList()
         {
@@ -153,7 +201,6 @@ namespace ComputerGraphics_Rasterization
                 .OrderBy(s => s.ZIndex)
                 .ToList();
         }
-
 
         private void OnShapeSelected(object sender, SelectionChangedEventArgs e)
         {

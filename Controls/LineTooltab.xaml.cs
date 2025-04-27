@@ -1,4 +1,5 @@
-﻿using ComputerGraphics_Rasterization.Services;
+﻿using ComputerGraphics_Rasterization.Controls.Events;
+using ComputerGraphics_Rasterization.Services;
 using ComputerGraphics_Rasterization.Shapes;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,8 @@ namespace ComputerGraphics_Rasterization.Controls
     public partial class LineTooltab : UserControl
     {
         public int SelectedThickness => (int)ThicknessSlider.Value;
+        public event EventHandler<LineShapeUpdatedEventArgs> LineShapeUpdated;
+
         public LineTooltab()
         {
             InitializeComponent();
@@ -40,6 +43,14 @@ namespace ComputerGraphics_Rasterization.Controls
             StartPointTextBlock.Text = $"";
             EndPointTextBlock.Text = $"";
             ThicknessSlider.Value = 1;
+        }
+
+        private void ThicknessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            LineShapeUpdated?.Invoke(this, new LineShapeUpdatedEventArgs
+            {
+                Thickness = (int)e.NewValue
+            });
         }
     }
 }

@@ -45,7 +45,7 @@
                    MouseLeftButtonDown="OnCanvasMouseLeftButtonDown"
                    MouseRightButtonDown="OnCanvasMouseRightButtonDown"
                    MouseMove="OnCanvasMouseMove"
-                   MouseLeftButtonUp="OnCanvasMouseLeftButtonUp"
+                   MouseRightButtonUp="OnCanvasMouseRightButtonUp"
                    Stretch="None"
                    RenderOptions.BitmapScalingMode="NearestNeighbor"/>
         </ScrollViewer>
