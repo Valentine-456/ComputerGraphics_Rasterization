@@ -27,8 +27,9 @@ namespace ComputerGraphics_Rasterization
     {
         private WriteableBitmap bitmap;
         private CanvasService canvasService;
+        private DrawingService drawingService;
 
-        private bool isDrawing = false;
+
         private IShape currentShape = null;
         private IShape selectedShape = null;
         private int? draggingHandleId = null;
@@ -36,6 +37,7 @@ namespace ComputerGraphics_Rasterization
 
 
         private LineTooltab _lineTooltab = null;
+        private CircleTooltab _circleTooltab = null;
 
         public MainWindow()
         {
@@ -53,37 +55,45 @@ namespace ComputerGraphics_Rasterization
 
             CanvasRenderer canvasRenderer = new CanvasRenderer(bitmap);
             canvasService = new CanvasService(canvasRenderer);
+            drawingService = new DrawingService(canvasService);
         }
 
         private void LineTooltab_Click(object sender, RoutedEventArgs e)
         {
+            ToolTab.Content = null;
+            _circleTooltab = null;
+
+            drawingService.SetDrawingMode(DrawingMode.Line);
+
             _lineTooltab = new LineTooltab();
             _lineTooltab.DeleteButton.Click += OnDeleteSelectedLineClicked;
             _lineTooltab.LineShapeUpdated += OnLineShapeUpdated;
             ToolTab.Content = _lineTooltab;
         }
 
+        private void CircleTooltab_Click(Object sender, RoutedEventArgs e)
+        {
+            ToolTab.Content = null;
+            _lineTooltab = null;
+
+            drawingService.SetDrawingMode(DrawingMode.Circle);
+
+            _circleTooltab = new CircleTooltab();
+            _circleTooltab.DeleteButton.Click += OnDeleteSelectedCircleClicked;
+            _circleTooltab.CircleShapeUpdated += OnCircleShapeUpdated;
+            ToolTab.Content = _circleTooltab;
+        }
+
         private void OnCanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Point click = e.GetPosition(DrawingSurface);
+            int thickness = _lineTooltab?.SelectedThickness ?? 1;
+            Color color = Colors.Black;
 
-            if (currentShape == null)
-            {
-                int thickness = _lineTooltab?.SelectedThickness ?? 1;
-                currentShape = new LineShape((int)click.X, (int)click.Y, (int)click.X, (int)click.Y, Colors.Black, thickness);
-            }
-            else
-            {
-                if (currentShape is LineShape line)
-                {
-                    line.X1 = (int)click.X;
-                    line.Y1 = (int)click.Y;
-                }
-                canvasService.AddShape(currentShape);
-                UpdateShapesList();
-                currentShape = null;
-                canvasService.DrawAll();
-            }
+            drawingService.HandleLeftClick(click, color, thickness);
+
+            UpdateShapesList();
+            canvasService.DrawAll();
         }
 
         private void OnCanvasMouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -97,7 +107,23 @@ namespace ComputerGraphics_Rasterization
                 lastDragPoint = click;
             }
 
-            UpdateLineTooltab();
+            if (selectedShape is LineShape)
+            {
+                drawingService.SetDrawingMode(DrawingMode.Line);
+                LineTooltab_Click(this, null);
+                UpdateLineTooltab();
+            }
+            else if (selectedShape is CircleShape)
+            {
+                drawingService.SetDrawingMode(DrawingMode.Circle);
+                CircleTooltab_Click(this, null);
+                UpdateCircleTooltab();
+            }
+            else
+            {
+                _lineTooltab?.ClearValues();
+                _circleTooltab?.ClearValues();
+            }
         }
 
         private void OnCanvasMouseMove(object sender, MouseEventArgs e)
@@ -152,6 +178,18 @@ namespace ComputerGraphics_Rasterization
             }
         }
 
+        private void OnDeleteSelectedCircleClicked(object sender, RoutedEventArgs e)
+        {
+            if (selectedShape != null)
+            {
+                canvasService.RemoveShape(selectedShape);
+                UpdateShapesList();
+                _circleTooltab.ClearValues();
+                canvasService.DrawAll();
+                selectedShape = null;
+            }
+        }
+
         private void UpdateLineTooltab()
         {
             if (_lineTooltab != null)
@@ -163,6 +201,21 @@ namespace ComputerGraphics_Rasterization
                 else
                 {
                     _lineTooltab.ClearValues();
+                }
+            }
+        }
+
+        private void UpdateCircleTooltab()
+        {
+            if (_circleTooltab != null)
+            {
+                if (selectedShape is CircleShape circle)
+                {
+                    _circleTooltab.SetValues(circle.X, circle.Y, circle.Radius);
+                }
+                else
+                {
+                    _circleTooltab.ClearValues();
                 }
             }
         }
@@ -193,6 +246,26 @@ namespace ComputerGraphics_Rasterization
             }
         }
 
+        private void OnCircleShapeUpdated(object sender, CircleShapeUpdatedEventArgs e)
+        {
+            if (selectedShape is CircleShape circle)
+            {
+                if (e.Radius.HasValue)
+                    circle.Radius = e.Radius.Value;
+
+                if (e.X.HasValue)
+                    circle.X = e.X.Value;
+
+                if (e.Y.HasValue)
+                    circle.Y = e.Y.Value;
+
+                if (e.Color.HasValue)
+                    circle.Color = e.Color.Value;
+
+                canvasService.DrawAll();
+            }
+        }
+
         private void UpdateShapesList()
         {
             ShapesListBox.ItemsSource = null;
@@ -207,13 +280,27 @@ namespace ComputerGraphics_Rasterization
             if (ShapesListBox.SelectedItem is IShape shape)
             {
                 selectedShape = shape;
-                UpdateLineTooltab();
+
+                if (shape is LineShape line)
+                {
+                    drawingService.SetDrawingMode(DrawingMode.Line);
+                    LineTooltab_Click(this, null);
+                    UpdateLineTooltab();
+                }
+                else if (shape is CircleShape circle)
+                {
+                    drawingService.SetDrawingMode(DrawingMode.Circle);
+                    CircleTooltab_Click(this, null);
+                    UpdateCircleTooltab();
+                }
+
                 canvasService.DrawAll();
             }
             else
             {
                 selectedShape = null;
                 _lineTooltab?.ClearValues();
+                _circleTooltab?.ClearValues();
             }
         }
     }
