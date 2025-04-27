@@ -12,40 +12,59 @@ namespace ComputerGraphics_Rasterization.RenderLogic
     internal class CanvasRenderer
     {
         private WriteableBitmap writeableBitmap;
+        private IntPtr pBackBuffer;
+        private int stride;
+        private bool isLocked = false;
 
         public CanvasRenderer(WriteableBitmap bitmap)
         {
             this.writeableBitmap = bitmap;
         }
 
+        public void BeginDraw()
+        {
+            if (!isLocked)
+            {
+                writeableBitmap.Lock();
+                pBackBuffer = writeableBitmap.BackBuffer;
+                stride = writeableBitmap.BackBufferStride;
+                isLocked = true;
+            }
+        }
+
+        public void EndDraw()
+        {
+            if (isLocked)
+            {
+                writeableBitmap.AddDirtyRect(new Int32Rect(0, 0, writeableBitmap.PixelWidth, writeableBitmap.PixelHeight));
+                writeableBitmap.Unlock();
+                isLocked = false;
+            }
+        }
+
         public void SetPixel(int x, int y, Color color)
         {
-            if (x < 0 || x >= writeableBitmap.PixelWidth || y < 0 || y >= writeableBitmap.PixelHeight)
-                return; 
+            if (!isLocked)
+                throw new InvalidOperationException("BeginDraw must be called before setting pixels.");
 
-            writeableBitmap.Lock();
+            if (x < 0 || x >= writeableBitmap.PixelWidth || y < 0 || y >= writeableBitmap.PixelHeight)
+                return;
+
             unsafe
             {
-                IntPtr pBackBuffer = writeableBitmap.BackBuffer;
-                int stride = writeableBitmap.BackBufferStride;
                 byte* pixel = (byte*)pBackBuffer + y * stride + x * 4;
-
                 pixel[0] = color.B;
                 pixel[1] = color.G;
                 pixel[2] = color.R;
                 pixel[3] = 255;
             }
-            writeableBitmap.AddDirtyRect(new System.Windows.Int32Rect(x, y, 1, 1));
-            writeableBitmap.Unlock();
         }
 
-        public void ClearCanvas() 
+        public void ClearCanvas()
         {
-            writeableBitmap.Lock();
+            BeginDraw();
             unsafe
             {
-                IntPtr pBackBuffer = writeableBitmap.BackBuffer;
-                int stride = writeableBitmap.BackBufferStride;
                 for (int y = 0; y < writeableBitmap.PixelHeight; y++)
                 {
                     byte* row = (byte*)pBackBuffer + y * stride;
@@ -58,8 +77,7 @@ namespace ComputerGraphics_Rasterization.RenderLogic
                     }
                 }
             }
-            writeableBitmap.AddDirtyRect(new Int32Rect(0, 0, writeableBitmap.PixelWidth, writeableBitmap.PixelHeight));
-            writeableBitmap.Unlock();
+            EndDraw();
         }
     }
 }

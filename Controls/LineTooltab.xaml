@@ -16,7 +16,7 @@
         <TextBlock x:Name="EndPointTextBlock" Margin="0,0,0,10"/>
 
         <TextBlock Text="Thickness:"/>
-        <TextBlock x:Name="ThicknessTextBlock" Margin="0,0,0,10"/>
+        <TextBlock x:Name="ThicknessTextBlock" Margin="0,0,0,10" Text="{Binding ElementName=ThicknessSlider, Path=Value, StringFormat={}{0:F0}}"/>
         <Slider x:Name="ThicknessSlider" Minimum="1" Maximum="20" Value="1" TickFrequency="1" 
                 IsSnapToTickEnabled="True" Margin="0,0,0,10"/>
 

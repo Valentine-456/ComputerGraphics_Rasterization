@@ -37,6 +37,7 @@ namespace ComputerGraphics_Rasterization
         {
             InitializeComponent();
             InitializeCanvas();
+            LineTooltab_Click(this, null);
         }
 
         private void InitializeCanvas()
@@ -48,6 +49,13 @@ namespace ComputerGraphics_Rasterization
 
             CanvasRenderer canvasRenderer = new CanvasRenderer(bitmap);
             canvasService = new CanvasService(canvasRenderer);
+        }
+
+        private void LineTooltab_Click(object sender, RoutedEventArgs e)
+        {
+            _lineTooltab = new LineTooltab();
+            _lineTooltab.DeleteButton.Click += OnDeleteSelectedLineClicked;
+            ToolTab.Content = _lineTooltab;
         }
 
         private void OnCanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -69,7 +77,7 @@ namespace ComputerGraphics_Rasterization
                 canvasService.AddShape(currentShape);
                 UpdateShapesList();
                 currentShape = null;
-                RedrawCanvas();
+                canvasService.DrawAll();
             }
         }
 
@@ -84,7 +92,7 @@ namespace ComputerGraphics_Rasterization
                     line.X1 = (int)move.X;
                     line.Y1 = (int)move.Y;
                 }
-                RedrawCanvas();
+                canvasService.DrawAll();
             }
         }
 
@@ -97,31 +105,17 @@ namespace ComputerGraphics_Rasterization
         {
             Point click = e.GetPosition(DrawingSurface);
             selectedShape = canvasService.FindShapeAt((int)click.X, (int)click.Y);
-            if (selectedShape != null)
-            {
-                _lineTooltab.SetValues(0, 0, 0, 0, 0);
-            }
-            UpdateLineTooltab();
-        }
 
-        private void RedrawCanvas()
-        {
-            canvasService.DrawAll();
+            UpdateLineTooltab();
         }
 
         private void ClearAll_Click(object sender, RoutedEventArgs e)
         {
+            ShapesListBox.ItemsSource = null;
             canvasService.ClearCanvas();
-            ShapesListBox.Items.Clear();
+            canvasService.DrawAll();
             currentShape = null;
             selectedShape = null;
-        }
-
-        private void LineTooltab_Click(object sender, RoutedEventArgs e)
-        {
-            _lineTooltab = new LineTooltab();
-            _lineTooltab.DeleteButton.Click += OnDeleteSelectedLineClicked;
-            ToolTab.Content = _lineTooltab;
         }
 
         private void OnDeleteSelectedLineClicked(object sender, RoutedEventArgs e)
@@ -130,37 +124,50 @@ namespace ComputerGraphics_Rasterization
             {
                 canvasService.RemoveShape(selectedShape);
                 UpdateShapesList();
-                RedrawCanvas();
+                canvasService.DrawAll();
                 selectedShape = null;
             }
         }
 
         private void UpdateLineTooltab()
         {
-            if (_lineTooltab != null && selectedShape is LineShape line)
+            if (_lineTooltab != null)
             {
-                _lineTooltab.SetValues(line.X0, line.Y0, line.X1, line.Y1, line.Thickness);
+                if (selectedShape is LineShape line)
+                {
+                    _lineTooltab.SetValues(line.X0, line.Y0, line.X1, line.Y1, line.Thickness);
+                }
+                else
+                {
+                    _lineTooltab.ClearValues();
+                }
             }
         }
+
 
         private void UpdateShapesList()
         {
             ShapesListBox.ItemsSource = null;
-            ShapesListBox.ItemsSource = canvasService.Shapes
-                .OrderBy(shape => shape.ZIndex)
-                .Select(shape => $"Line Z-Index: {shape.ZIndex}");
+            ShapesListBox.ItemsSource = canvasService
+                .Shapes
+                .OrderBy(s => s.ZIndex)
+                .ToList();
         }
+
 
         private void OnShapeSelected(object sender, SelectionChangedEventArgs e)
         {
-            if (ShapesListBox.SelectedIndex >= 0)
+            if (ShapesListBox.SelectedItem is IShape shape)
             {
-                var selectedLineId = (uint)ShapesListBox.SelectedIndex;
-                selectedShape = canvasService.Shapes.FirstOrDefault(s => s.ZIndex == selectedLineId);
+                selectedShape = shape;
                 UpdateLineTooltab();
-                RedrawCanvas();
+                canvasService.DrawAll();
+            }
+            else
+            {
+                selectedShape = null;
+                _lineTooltab?.ClearValues();
             }
         }
-
     }
 }

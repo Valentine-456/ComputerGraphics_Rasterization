@@ -48,5 +48,11 @@ namespace ComputerGraphics_Rasterization.Shapes
             return distance <= Thickness / 2 + 2;
 
         }
+
+        public override string ToString()
+        {
+            return $"Line Z-Index: {ZIndex}";
+        }
+
     }
 }

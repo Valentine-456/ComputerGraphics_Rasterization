@@ -30,9 +30,16 @@ namespace ComputerGraphics_Rasterization.Controls
 
         public void SetValues(int x0, int y0, int x1, int y1, int thickness)
         {
-            StartPointTextBlock.Text = $"Start: ({x0},{y0})";
-            EndPointTextBlock.Text = $"End: ({x1},{y1})";
+            StartPointTextBlock.Text = $"X: {x0}, Y: {y0}";
+            EndPointTextBlock.Text = $"X: {x1}, Y: {y1}";
             ThicknessSlider.Value = thickness;
+        }
+
+        public void ClearValues()
+        {
+            StartPointTextBlock.Text = $"";
+            EndPointTextBlock.Text = $"";
+            ThicknessSlider.Value = 1;
         }
     }
 }

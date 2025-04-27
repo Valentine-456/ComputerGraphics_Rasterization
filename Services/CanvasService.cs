@@ -32,13 +32,19 @@ namespace ComputerGraphics_Rasterization.Services
 
         public void DrawAll()
         {
+            Renderer.ClearCanvas();
+            if (!Shapes.Any())
+                return;
+
+            Renderer.BeginDraw();
             foreach (var shape in Shapes.OrderBy(s => s.ZIndex))
                 shape.Draw(Renderer);
+            Renderer.EndDraw();
         }
 
         public IShape FindShapeAt(int x, int y)
         {
-            return Shapes.Last(shape => shape.IsTargeted(x, y));
+            return Shapes.LastOrDefault(shape => shape.IsTargeted(x, y));
         }
 
         public void ClearCanvas()
