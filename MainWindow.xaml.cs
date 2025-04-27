@@ -29,8 +29,6 @@ namespace ComputerGraphics_Rasterization
         private CanvasService canvasService;
         private DrawingService drawingService;
 
-
-        private IShape currentShape = null;
         private IShape selectedShape = null;
         private int? draggingHandleId = null;
         private Point? lastDragPoint = null;
@@ -162,7 +160,7 @@ namespace ComputerGraphics_Rasterization
             ShapesListBox.ItemsSource = null;
             canvasService.ClearCanvas();
             canvasService.DrawAll();
-            currentShape = null;
+            drawingService.ClearCurrentShape();
             selectedShape = null;
         }
 

@@ -31,6 +31,11 @@ namespace ComputerGraphics_Rasterization.Services
             return currentMode;
         }
 
+        public void ClearCurrentShape()
+        {
+            currentShape = null;
+        }
+
         public void HandleLeftClick(Point click, Color selectedColor, int thickness)
         {
             if (currentShape == null)
