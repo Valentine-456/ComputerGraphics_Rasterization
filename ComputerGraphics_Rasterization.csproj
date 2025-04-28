@@ -65,8 +65,12 @@
     </Compile>
     <Compile Include="Controls\Events\CircleShapeUpdatedEventArgs.cs" />
     <Compile Include="Controls\Events\LineShapeUpdatedEventArgs.cs" />
+    <Compile Include="Controls\Events\PolygonShapeUpdatedEventArgs.cs" />
     <Compile Include="Controls\LineTooltab.xaml.cs">
       <DependentUpon>LineTooltab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PolygonTooltab.xaml.cs">
+      <DependentUpon>PolygonTooltab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\RoundedRectangleTooltab.xaml.cs">
       <DependentUpon>RoundedRectangleTooltab.xaml</DependentUpon>
@@ -84,12 +88,17 @@
     <Compile Include="Shapes\IMovableShape.cs" />
     <Compile Include="Shapes\IShape.cs" />
     <Compile Include="Shapes\LineShape.cs" />
+    <Compile Include="Shapes\PolygonShape.cs" />
     <Compile Include="Shapes\RoundedRectangleShape.cs" />
     <Page Include="Controls\CircleTooltab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\LineTooltab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PolygonTooltab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

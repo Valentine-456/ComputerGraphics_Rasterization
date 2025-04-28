@@ -11,6 +11,7 @@ namespace ComputerGraphics_Rasterization.Services
         None,
         Line,
         Circle,
-        RoundedRectangle
+        RoundedRectangle,
+        Polygon
     }
 }

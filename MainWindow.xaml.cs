@@ -38,6 +38,8 @@ namespace ComputerGraphics_Rasterization
         private LineTooltab _lineTooltab = null;
         private CircleTooltab _circleTooltab = null;
         private RoundedRectangleTooltab _roundedRectangleTooltab = null;
+        private PolygonTooltab _polygonTooltab = null;
+
 
         public MainWindow()
         {
@@ -93,6 +95,7 @@ namespace ComputerGraphics_Rasterization
             ToolTab.Content = null;
             _circleTooltab = null;
             _roundedRectangleTooltab = null;
+            _polygonTooltab = null;
 
             drawingService.SetDrawingMode(DrawingMode.Line);
 
@@ -107,6 +110,7 @@ namespace ComputerGraphics_Rasterization
             ToolTab.Content = null;
             _lineTooltab = null;
             _roundedRectangleTooltab = null;
+            _polygonTooltab = null;
 
             drawingService.SetDrawingMode(DrawingMode.Circle);
 
@@ -121,19 +125,35 @@ namespace ComputerGraphics_Rasterization
             ToolTab.Content = null;
             _lineTooltab = null;
             _circleTooltab = null;
+            _polygonTooltab = null;
 
             drawingService.SetDrawingMode(DrawingMode.RoundedRectangle);
 
             _roundedRectangleTooltab = new RoundedRectangleTooltab();
             _roundedRectangleTooltab.DeleteButton.Click += OnDeleteSelectedRoundRectClicked;
-            // _roundedRectangleTooltab.CircleShapeUpdated += OnCircleShapeUpdated;
             ToolTab.Content = _roundedRectangleTooltab;
         }
+
+        private void PolygonTooltab_Click(object sender, RoutedEventArgs e)
+        {
+            ToolTab.Content = null;
+            _lineTooltab = null;
+            _circleTooltab = null;
+            _roundedRectangleTooltab = null;
+
+            drawingService.SetDrawingMode(DrawingMode.Polygon);
+
+            _polygonTooltab = new PolygonTooltab();
+            _polygonTooltab.DeleteButton.Click += OnDeleteSelectedPolygonClicked;
+            _polygonTooltab.PolygonShapeUpdated += OnPolygonShapeUpdated;
+            ToolTab.Content = _polygonTooltab;
+        }
+
 
         private void ToggleAntialiasing_Click(object sender, RoutedEventArgs e)
         {
             SettingsService.IsAntialiasingEnabled = !SettingsService.IsAntialiasingEnabled;
-            canvasService.DrawAll();
+            canvasService.DrawAll(drawingService.GetCurrentShape());
         }
 
         private void OnCanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -145,7 +165,7 @@ namespace ComputerGraphics_Rasterization
             drawingService.HandleLeftClick(click, color, thickness);
 
             UpdateShapesList();
-            canvasService.DrawAll();
+            canvasService.DrawAll(drawingService.GetCurrentShape());
         }
 
         private void OnCanvasMouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -171,12 +191,17 @@ namespace ComputerGraphics_Rasterization
             else if (selectedShape is RoundedRectangleShape)
             {
                 RoundedRectangleTooltab_Click(this, null);
-                UpdateCircleTooltab();
+            }
+            else if (selectedShape is PolygonShape)
+            {
+                PolygonTooltab_Click(this, null);
+                
             }
             else
             {
                 _lineTooltab?.ClearValues();
                 _circleTooltab?.ClearValues();
+                _polygonTooltab?.ClearValues();
             }
         }
 
@@ -197,7 +222,7 @@ namespace ComputerGraphics_Rasterization
                     movable.MoveEntireFigure(dx, dy);
                     lastDragPoint = move;
                 }
-                canvasService.DrawAll();
+                canvasService.DrawAll(drawingService.GetCurrentShape());
             }
         }
 
@@ -215,7 +240,7 @@ namespace ComputerGraphics_Rasterization
         {
             ShapesListBox.ItemsSource = null;
             canvasService.ClearCanvas();
-            canvasService.DrawAll();
+            canvasService.DrawAll(drawingService.GetCurrentShape());
             drawingService.ClearCurrentShape();
             selectedShape = null;
         }
@@ -227,7 +252,7 @@ namespace ComputerGraphics_Rasterization
                 canvasService.RemoveShape(selectedShape);
                 UpdateShapesList();
                 _lineTooltab.ClearValues();
-                canvasService.DrawAll();
+                canvasService.DrawAll(drawingService.GetCurrentShape());
                 selectedShape = null;
             }
         }
@@ -239,7 +264,7 @@ namespace ComputerGraphics_Rasterization
                 canvasService.RemoveShape(selectedShape);
                 UpdateShapesList();
                 _circleTooltab.ClearValues();
-                canvasService.DrawAll();
+                canvasService.DrawAll(drawingService.GetCurrentShape());
                 selectedShape = null;
             }
         }
@@ -250,6 +275,18 @@ namespace ComputerGraphics_Rasterization
             {
                 canvasService.RemoveShape(selectedShape);
                 UpdateShapesList();
+                canvasService.DrawAll(drawingService.GetCurrentShape());
+                selectedShape = null;
+            }
+        }
+
+        private void OnDeleteSelectedPolygonClicked(object sender, RoutedEventArgs e)
+        {
+            if (selectedShape != null)
+            {
+                canvasService.RemoveShape(selectedShape);
+                UpdateShapesList();
+                _polygonTooltab.ClearValues();
                 canvasService.DrawAll();
                 selectedShape = null;
             }
@@ -331,6 +368,18 @@ namespace ComputerGraphics_Rasterization
             }
         }
 
+        private void OnPolygonShapeUpdated(object sender, PolygonShapeUpdatedEventArgs e)
+        {
+            if (selectedShape is PolygonShape polygon)
+            {
+                if (e.Thickness.HasValue)
+                    polygon.Thickness = e.Thickness.Value;
+
+                canvasService.DrawAll();
+            }
+        }
+
+
         private void UpdateShapesList()
         {
             ShapesListBox.ItemsSource = null;
@@ -362,6 +411,11 @@ namespace ComputerGraphics_Rasterization
                 {
                     drawingService.SetDrawingMode(DrawingMode.RoundedRectangle);
                     RoundedRectangleTooltab_Click(this, null);
+                }
+                else if (shape is PolygonShape polygon)
+                {
+                    drawingService.SetDrawingMode(DrawingMode.Polygon);
+                    PolygonTooltab_Click(this, null);
                 }
 
                 canvasService.DrawAll();

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows;
+using System.Windows.Shapes;
 
 namespace ComputerGraphics_Rasterization.Services
 {
@@ -52,6 +53,10 @@ namespace ComputerGraphics_Rasterization.Services
                         currentShape = new RoundedRectangleShape(selectedColor);
                         ((RoundedRectangleShape)currentShape).AddClick((int)click.X, (int)click.Y);
                         break;
+                    case DrawingMode.Polygon:
+                        currentShape = new PolygonShape(selectedColor, thickness);
+                        ((PolygonShape)currentShape).AddVertex((int)click.X, (int)click.Y);
+                        break;
                 }
             }
             else
@@ -77,9 +82,24 @@ namespace ComputerGraphics_Rasterization.Services
                             currentShape = null;
                         }
                         break;
-
+                    case PolygonShape polygon:
+                        if (!polygon.IsClosed)
+                        {
+                            if (polygon.CloseToFirstVertex((int)click.X, (int)click.Y))
+                            {
+                                polygon.Close();
+                                canvasService.AddShape(polygon);
+                                currentShape = null;
+                            }
+                            else
+                            {
+                                polygon.AddVertex((int)click.X, (int)click.Y);
+                            }
+                        }
+                        break;
                 }
             }
+            canvasService.DrawAll(currentShape);
         }
 
         public IShape GetCurrentShape() => currentShape;

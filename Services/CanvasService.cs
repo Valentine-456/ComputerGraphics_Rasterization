@@ -30,15 +30,19 @@ namespace ComputerGraphics_Rasterization.Services
             Shapes.Remove(shape);
         }
 
-        public void DrawAll()
+        public void DrawAll(IShape currentShape = null)
         {
             Renderer.ClearCanvas();
-            if (!Shapes.Any())
+            if (!Shapes.Any() && currentShape == null)
                 return;
 
             Renderer.BeginDraw();
             foreach (var shape in Shapes.OrderBy(s => s.ZIndex))
                 shape.Draw(Renderer);
+
+            if (currentShape != null)
+                currentShape.Draw(Renderer);
+
             Renderer.EndDraw();
         }
 
