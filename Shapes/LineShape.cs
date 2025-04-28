@@ -1,4 +1,5 @@
 ﻿using ComputerGraphics_Rasterization.RenderLogic;
+using ComputerGraphics_Rasterization.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,10 @@ namespace ComputerGraphics_Rasterization.Shapes
 
         public void Draw(CanvasRenderer renderer)
         {
-            DDARenderer.DrawLine(renderer, X0, Y0, X1, Y1, Color, Thickness);
+            if (SettingsService.IsAntialiasingEnabled)
+                GouptaSproullsRenderer.DrawLine(renderer, X0, Y0, X1, Y1, Color, Thickness);
+            else
+                DDARenderer.DrawLine(renderer, X0, Y0, X1, Y1, Color, Thickness);
         }
 
         public bool IsTargeted(int x, int y)

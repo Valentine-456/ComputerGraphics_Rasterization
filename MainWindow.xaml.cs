@@ -113,6 +113,12 @@ namespace ComputerGraphics_Rasterization
             ToolTab.Content = _circleTooltab;
         }
 
+        private void ToggleAntialiasing_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsService.IsAntialiasingEnabled = !SettingsService.IsAntialiasingEnabled;
+            canvasService.DrawAll();
+        }
+
         private void OnCanvasMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Point click = e.GetPosition(DrawingSurface);

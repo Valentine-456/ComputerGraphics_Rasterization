@@ -17,8 +17,6 @@ namespace ComputerGraphics_Rasterization.RenderLogic
             int x = 0;
             int y = radius;
 
-            renderer.BeginDraw();
-
             PlotCirclePoints(renderer, centerX, centerY, x, y, color);
 
             while (y > x)
@@ -40,8 +38,6 @@ namespace ComputerGraphics_Rasterization.RenderLogic
 
                 PlotCirclePoints(renderer, centerX, centerY, x, y, color);
             }
-
-            renderer.EndDraw();
         }
 
         private static void PlotCirclePoints(CanvasRenderer renderer, int centerX, int centerY, int x, int y, Color color)

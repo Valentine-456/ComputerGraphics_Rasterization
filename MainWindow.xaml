@@ -32,7 +32,7 @@
                 <MenuItem Header="Circle" Click="CircleTooltab_Click"/>
             </MenuItem>
             <MenuItem Header="View">
-                <MenuItem Header="Toggle Antialiasing"/>
+                <MenuItem Header="Toggle Antialiasing" Click="ToggleAntialiasing_Click"/>
             </MenuItem>
         </Menu>
 

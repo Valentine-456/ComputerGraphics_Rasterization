@@ -70,11 +70,13 @@
     </Compile>
     <Compile Include="RenderLogic\CanvasRenderer.cs" />
     <Compile Include="RenderLogic\DDARenderer.cs" />
+    <Compile Include="RenderLogic\GouptaSproullsRenderer.cs" />
     <Compile Include="RenderLogic\MidpointCircleRenderer.cs" />
     <Compile Include="Services\CanvasService.cs" />
     <Compile Include="Services\DrawingMode.cs" />
     <Compile Include="Services\DrawingService.cs" />
     <Compile Include="Services\FileOperationsService.cs" />
+    <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Shapes\CircleShape.cs" />
     <Compile Include="Shapes\IMovableShape.cs" />
     <Compile Include="Shapes\IShape.cs" />
