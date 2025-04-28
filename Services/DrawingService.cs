@@ -99,7 +99,6 @@ namespace ComputerGraphics_Rasterization.Services
                         break;
                 }
             }
-            canvasService.DrawAll(currentShape);
         }
 
         public IShape GetCurrentShape() => currentShape;

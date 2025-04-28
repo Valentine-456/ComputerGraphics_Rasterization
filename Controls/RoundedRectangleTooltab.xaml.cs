@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ComputerGraphics_Rasterization.Controls.Events;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,29 @@ namespace ComputerGraphics_Rasterization.Controls
     /// </summary>
     public partial class RoundedRectangleTooltab : UserControl
     {
+        public event EventHandler<RoundedRectShapeUpdatedEventArgs> RoundedRectShapeUpdated;
+        public Color SelectedColor => ColorPickerControl.SelectedColor ?? Colors.Black;
         public RoundedRectangleTooltab()
         {
             InitializeComponent();
+        }
+
+        private void ColorPickerControl_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+            RoundedRectShapeUpdated?.Invoke(this, new RoundedRectShapeUpdatedEventArgs
+            {
+                Color = e.NewValue
+            });
+        }
+
+        public void SetValues(Color color)
+        {
+            ColorPickerControl.SelectedColor = color;
+        }
+
+        public void ClearValues()
+        {
+            ColorPickerControl.SelectedColor = Colors.Black;
         }
     }
 }

@@ -24,6 +24,7 @@ namespace ComputerGraphics_Rasterization.Controls
     public partial class LineTooltab : UserControl
     {
         public int SelectedThickness => (int)ThicknessSlider.Value;
+        public Color SelectedColor => ColorPickerControl.SelectedColor ?? Colors.Black;
         public event EventHandler<LineShapeUpdatedEventArgs> LineShapeUpdated;
 
         public LineTooltab()
@@ -31,11 +32,12 @@ namespace ComputerGraphics_Rasterization.Controls
             InitializeComponent();
         }
 
-        public void SetValues(int x0, int y0, int x1, int y1, int thickness)
+        public void SetValues(int x0, int y0, int x1, int y1, int thickness, Color color)
         {
             StartPointTextBlock.Text = $"X: {x0}, Y: {y0}";
             EndPointTextBlock.Text = $"X: {x1}, Y: {y1}";
             ThicknessSlider.Value = thickness;
+            ColorPickerControl.SelectedColor = color;
         }
 
         public void ClearValues()
@@ -43,13 +45,24 @@ namespace ComputerGraphics_Rasterization.Controls
             StartPointTextBlock.Text = $"";
             EndPointTextBlock.Text = $"";
             ThicknessSlider.Value = 1;
+            ColorPickerControl.SelectedColor = Colors.Black;
         }
 
         private void ThicknessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             LineShapeUpdated?.Invoke(this, new LineShapeUpdatedEventArgs
             {
-                Thickness = (int)e.NewValue
+                Thickness = (int)e.NewValue,
+                Color = ColorPickerControl.SelectedColor
+            });
+        }
+
+        private void ColorPickerControl_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+            LineShapeUpdated?.Invoke(this, new LineShapeUpdatedEventArgs
+            {
+                Thickness = SelectedThickness,
+                Color = e.NewValue
             });
         }
     }

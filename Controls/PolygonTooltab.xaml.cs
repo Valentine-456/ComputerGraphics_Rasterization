@@ -23,6 +23,7 @@ namespace ComputerGraphics_Rasterization.Controls
     {
         public event EventHandler<PolygonShapeUpdatedEventArgs> PolygonShapeUpdated;
         public int SelectedThickness => (int)ThicknessSlider.Value;
+        public Color SelectedColor => ColorPickerControl.SelectedColor ?? Colors.Black;
 
         public PolygonTooltab()
         {
@@ -33,18 +34,30 @@ namespace ComputerGraphics_Rasterization.Controls
         {
             PolygonShapeUpdated?.Invoke(this, new PolygonShapeUpdatedEventArgs
             {
-                Thickness = (int)e.NewValue
+                Thickness = (int)e.NewValue,
+                Color = ColorPickerControl.SelectedColor
             });
         }
 
-        public void SetValues(int thickness)
+        private void ColorPickerControl_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+            PolygonShapeUpdated?.Invoke(this, new PolygonShapeUpdatedEventArgs
+            {
+                Thickness = SelectedThickness,
+                Color = e.NewValue
+            });
+        }
+
+        public void SetValues(int thickness, Color color)
         {
             ThicknessSlider.Value = thickness;
+            ColorPickerControl.SelectedColor = color;
         }
 
         public void ClearValues()
         {
             ThicknessSlider.Value = 1;
+            ColorPickerControl.SelectedColor = Colors.Black;
         }
     }
 }

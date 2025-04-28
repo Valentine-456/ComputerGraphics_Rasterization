@@ -131,6 +131,7 @@ namespace ComputerGraphics_Rasterization
 
             _roundedRectangleTooltab = new RoundedRectangleTooltab();
             _roundedRectangleTooltab.DeleteButton.Click += OnDeleteSelectedRoundRectClicked;
+            _roundedRectangleTooltab.RoundedRectShapeUpdated += OnRoundedRectShapeUpdated;
             ToolTab.Content = _roundedRectangleTooltab;
         }
 
@@ -160,7 +161,11 @@ namespace ComputerGraphics_Rasterization
         {
             Point click = e.GetPosition(DrawingSurface);
             int thickness = _lineTooltab?.SelectedThickness ?? 1;
-            Color color = Colors.Black;
+            Color color = _lineTooltab?.SelectedColor ?? 
+                _circleTooltab?.SelectedColor ?? 
+                _polygonTooltab?.SelectedColor ?? 
+                _roundedRectangleTooltab?.SelectedColor ??
+                Colors.Black;
 
             drawingService.HandleLeftClick(click, color, thickness);
 
@@ -195,7 +200,7 @@ namespace ComputerGraphics_Rasterization
             else if (selectedShape is PolygonShape)
             {
                 PolygonTooltab_Click(this, null);
-                
+
             }
             else
             {
@@ -298,7 +303,7 @@ namespace ComputerGraphics_Rasterization
             {
                 if (selectedShape is LineShape line)
                 {
-                    _lineTooltab.SetValues(line.X0, line.Y0, line.X1, line.Y1, line.Thickness);
+                    _lineTooltab.SetValues(line.X0, line.Y0, line.X1, line.Y1, line.Thickness, line.Color);
                 }
                 else
                 {
@@ -313,11 +318,39 @@ namespace ComputerGraphics_Rasterization
             {
                 if (selectedShape is CircleShape circle)
                 {
-                    _circleTooltab.SetValues(circle.X, circle.Y, circle.Radius);
+                    _circleTooltab.SetValues(circle.X, circle.Y, circle.Radius, circle.Color);
                 }
                 else
                 {
                     _circleTooltab.ClearValues();
+                }
+            }
+        }
+        private void UpdatePolygonTooltab()
+        {
+            if (_polygonTooltab != null)
+            {
+                if (selectedShape is PolygonShape polygon)
+                {
+                    _polygonTooltab.SetValues(polygon.Thickness, polygon.Color);
+                }
+                else
+                {
+                    _polygonTooltab.ClearValues();
+                }
+            }
+        }
+        private void UpdateRoundedRectTooltab()
+        {
+            if (_roundedRectangleTooltab != null)
+            {
+                if (selectedShape is RoundedRectangleShape roundedRect)
+                {
+                    _roundedRectangleTooltab.SetValues(roundedRect.Color);
+                }
+                else
+                {
+                    _roundedRectangleTooltab.ClearValues();
                 }
             }
         }
@@ -368,12 +401,25 @@ namespace ComputerGraphics_Rasterization
             }
         }
 
+        private void OnRoundedRectShapeUpdated(object sender, RoundedRectShapeUpdatedEventArgs e)
+        {
+            if (selectedShape is RoundedRectangleShape roundedRect)
+            {
+                if (e.Color.HasValue)
+                    roundedRect.Color = e.Color.Value;
+
+                canvasService.DrawAll();
+            }
+        }
+
         private void OnPolygonShapeUpdated(object sender, PolygonShapeUpdatedEventArgs e)
         {
             if (selectedShape is PolygonShape polygon)
             {
                 if (e.Thickness.HasValue)
                     polygon.Thickness = e.Thickness.Value;
+                if (e.Color.HasValue)
+                    polygon.Color = e.Color.Value;
 
                 canvasService.DrawAll();
             }
@@ -425,6 +471,8 @@ namespace ComputerGraphics_Rasterization
                 selectedShape = null;
                 _lineTooltab?.ClearValues();
                 _circleTooltab?.ClearValues();
+                _polygonTooltab?.ClearValues();
+                _roundedRectangleTooltab?.ClearValues();
             }
         }
     }
