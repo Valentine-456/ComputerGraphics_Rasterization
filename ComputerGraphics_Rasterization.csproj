@@ -68,6 +68,9 @@
     <Compile Include="Controls\LineTooltab.xaml.cs">
       <DependentUpon>LineTooltab.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\RoundedRectangleTooltab.xaml.cs">
+      <DependentUpon>RoundedRectangleTooltab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RenderLogic\CanvasRenderer.cs" />
     <Compile Include="RenderLogic\DDARenderer.cs" />
     <Compile Include="RenderLogic\GouptaSproullsRenderer.cs" />
@@ -81,11 +84,16 @@
     <Compile Include="Shapes\IMovableShape.cs" />
     <Compile Include="Shapes\IShape.cs" />
     <Compile Include="Shapes\LineShape.cs" />
+    <Compile Include="Shapes\RoundedRectangleShape.cs" />
     <Page Include="Controls\CircleTooltab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\LineTooltab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\RoundedRectangleTooltab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -30,6 +30,7 @@
             <MenuItem Header="Tools">
                 <MenuItem Header="Line" Click="LineTooltab_Click"/>
                 <MenuItem Header="Circle" Click="CircleTooltab_Click"/>
+                <MenuItem Header="Rounded Rect" Click="RoundedRectangleTooltab_Click"/>
             </MenuItem>
             <MenuItem Header="View">
                 <MenuItem Header="Toggle Antialiasing" Click="ToggleAntialiasing_Click"/>

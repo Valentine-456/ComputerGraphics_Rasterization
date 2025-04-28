@@ -48,6 +48,10 @@ namespace ComputerGraphics_Rasterization.Services
                     case DrawingMode.Circle:
                         currentShape = new CircleShape((int)click.X, (int)click.Y, 0, selectedColor);
                         break;
+                    case DrawingMode.RoundedRectangle:
+                        currentShape = new RoundedRectangleShape(selectedColor);
+                        ((RoundedRectangleShape)currentShape).AddClick((int)click.X, (int)click.Y);
+                        break;
                 }
             }
             else
@@ -57,14 +61,24 @@ namespace ComputerGraphics_Rasterization.Services
                     case LineShape line:
                         line.X1 = (int)click.X;
                         line.Y1 = (int)click.Y;
+                        canvasService.AddShape(currentShape);
+                        currentShape = null;
                         break;
                     case CircleShape circle:
                         circle.Radius = (int)Math.Sqrt(Math.Pow(click.X - circle.X, 2) + Math.Pow(click.Y - circle.Y, 2));
+                        canvasService.AddShape(currentShape);
+                        currentShape = null;
                         break;
-                }
+                    case RoundedRectangleShape rounded:
+                        rounded.AddClick((int)click.X, (int)click.Y);
+                        if (rounded.IsComplete)
+                        {
+                            canvasService.AddShape(rounded);
+                            currentShape = null;
+                        }
+                        break;
 
-                canvasService.AddShape(currentShape);
-                currentShape = null;
+                }
             }
         }
 

@@ -37,6 +37,7 @@ namespace ComputerGraphics_Rasterization
 
         private LineTooltab _lineTooltab = null;
         private CircleTooltab _circleTooltab = null;
+        private RoundedRectangleTooltab _roundedRectangleTooltab = null;
 
         public MainWindow()
         {
@@ -91,6 +92,7 @@ namespace ComputerGraphics_Rasterization
         {
             ToolTab.Content = null;
             _circleTooltab = null;
+            _roundedRectangleTooltab = null;
 
             drawingService.SetDrawingMode(DrawingMode.Line);
 
@@ -104,6 +106,7 @@ namespace ComputerGraphics_Rasterization
         {
             ToolTab.Content = null;
             _lineTooltab = null;
+            _roundedRectangleTooltab = null;
 
             drawingService.SetDrawingMode(DrawingMode.Circle);
 
@@ -111,6 +114,20 @@ namespace ComputerGraphics_Rasterization
             _circleTooltab.DeleteButton.Click += OnDeleteSelectedCircleClicked;
             _circleTooltab.CircleShapeUpdated += OnCircleShapeUpdated;
             ToolTab.Content = _circleTooltab;
+        }
+
+        private void RoundedRectangleTooltab_Click(Object sender, RoutedEventArgs e)
+        {
+            ToolTab.Content = null;
+            _lineTooltab = null;
+            _circleTooltab = null;
+
+            drawingService.SetDrawingMode(DrawingMode.RoundedRectangle);
+
+            _roundedRectangleTooltab = new RoundedRectangleTooltab();
+            _roundedRectangleTooltab.DeleteButton.Click += OnDeleteSelectedRoundRectClicked;
+            // _roundedRectangleTooltab.CircleShapeUpdated += OnCircleShapeUpdated;
+            ToolTab.Content = _roundedRectangleTooltab;
         }
 
         private void ToggleAntialiasing_Click(object sender, RoutedEventArgs e)
@@ -141,17 +158,19 @@ namespace ComputerGraphics_Rasterization
                 draggingHandleId = movable.FindClosestHandle((int)click.X, (int)click.Y);
                 lastDragPoint = click;
             }
-
             if (selectedShape is LineShape)
             {
-                drawingService.SetDrawingMode(DrawingMode.Line);
                 LineTooltab_Click(this, null);
                 UpdateLineTooltab();
             }
             else if (selectedShape is CircleShape)
             {
-                drawingService.SetDrawingMode(DrawingMode.Circle);
                 CircleTooltab_Click(this, null);
+                UpdateCircleTooltab();
+            }
+            else if (selectedShape is RoundedRectangleShape)
+            {
+                RoundedRectangleTooltab_Click(this, null);
                 UpdateCircleTooltab();
             }
             else
@@ -220,6 +239,17 @@ namespace ComputerGraphics_Rasterization
                 canvasService.RemoveShape(selectedShape);
                 UpdateShapesList();
                 _circleTooltab.ClearValues();
+                canvasService.DrawAll();
+                selectedShape = null;
+            }
+        }
+
+        private void OnDeleteSelectedRoundRectClicked(object sender, RoutedEventArgs e)
+        {
+            if (selectedShape != null)
+            {
+                canvasService.RemoveShape(selectedShape);
+                UpdateShapesList();
                 canvasService.DrawAll();
                 selectedShape = null;
             }
@@ -327,6 +357,11 @@ namespace ComputerGraphics_Rasterization
                     drawingService.SetDrawingMode(DrawingMode.Circle);
                     CircleTooltab_Click(this, null);
                     UpdateCircleTooltab();
+                }
+                else if (shape is RoundedRectangleShape roundedRect)
+                {
+                    drawingService.SetDrawingMode(DrawingMode.RoundedRectangle);
+                    RoundedRectangleTooltab_Click(this, null);
                 }
 
                 canvasService.DrawAll();

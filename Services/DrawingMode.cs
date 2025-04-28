@@ -10,6 +10,7 @@ namespace ComputerGraphics_Rasterization.Services
     {
         None,
         Line,
-        Circle
+        Circle,
+        RoundedRectangle
     }
 }
