@@ -33,6 +33,7 @@
                 <MenuItem Header="Rounded Rect" Click="RoundedRectangleTooltab_Click"/>
                 <MenuItem Header="Polygon" Click="PolygonTooltab_Click"/>
                 <MenuItem Header="Rectangle" Click="RectangleTooltab_Click"/>
+                <MenuItem Header="Clipping tool" Click="ClippingTooltab_Click"/>
             </MenuItem>
             <MenuItem Header="View">
                 <MenuItem Header="Toggle Antialiasing" Click="ToggleAntialiasing_Click"/>
@@ -60,7 +61,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock Text="Shapes" FontWeight="Bold" Grid.Row="0"/>
-            <ListBox x:Name="ShapesListBox" Grid.Row="1" SelectionChanged="OnShapeSelected" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+            <ListBox x:Name="ShapesListBox" SelectionMode="Extended" Grid.Row="1" SelectionChanged="OnShapeSelected" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
 
         </Grid>
 

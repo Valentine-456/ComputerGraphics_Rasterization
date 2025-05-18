@@ -40,6 +40,7 @@ namespace ComputerGraphics_Rasterization
         private RoundedRectangleTooltab _roundedRectangleTooltab = null;
         private PolygonTooltab _polygonTooltab = null;
         private RectangleTooltab _rectangleTooltab = null;
+        private ClippingTooltab _clippingTooltab = null;
 
 
         public MainWindow()
@@ -98,6 +99,7 @@ namespace ComputerGraphics_Rasterization
             _roundedRectangleTooltab = null;
             _polygonTooltab = null;
             _rectangleTooltab = null;
+            _clippingTooltab = null;
 
             drawingService.SetDrawingMode(DrawingMode.Line);
 
@@ -114,6 +116,7 @@ namespace ComputerGraphics_Rasterization
             _roundedRectangleTooltab = null;
             _polygonTooltab = null;
             _rectangleTooltab = null;
+            _clippingTooltab = null;
 
             drawingService.SetDrawingMode(DrawingMode.Circle);
 
@@ -130,6 +133,7 @@ namespace ComputerGraphics_Rasterization
             _circleTooltab = null;
             _polygonTooltab = null;
             _rectangleTooltab = null;
+            _clippingTooltab = null;
 
             drawingService.SetDrawingMode(DrawingMode.RoundedRectangle);
 
@@ -146,6 +150,7 @@ namespace ComputerGraphics_Rasterization
             _circleTooltab = null;
             _roundedRectangleTooltab = null;
             _rectangleTooltab = null;
+            _clippingTooltab = null;
 
             drawingService.SetDrawingMode(DrawingMode.Polygon);
 
@@ -162,6 +167,7 @@ namespace ComputerGraphics_Rasterization
             _circleTooltab = null;
             _roundedRectangleTooltab = null;
             _polygonTooltab = null;
+            _clippingTooltab = null;
 
             drawingService.SetDrawingMode(DrawingMode.Rectangle);
 
@@ -170,6 +176,21 @@ namespace ComputerGraphics_Rasterization
             _rectangleTooltab.RectangleShapeUpdated += OnRectangleShapeUpdated;
             ToolTab.Content = _rectangleTooltab;
         }
+
+        private void ClippingTooltab_Click(object sender, RoutedEventArgs e)
+        {
+            ToolTab.Content = null;
+            _lineTooltab = null;
+            _circleTooltab = null;
+            _polygonTooltab = null;
+            _roundedRectangleTooltab = null;
+            _rectangleTooltab = null;
+
+            _clippingTooltab = new ClippingTooltab();
+            _clippingTooltab.ClipToButton.Click += OnClipToClicked;
+            ToolTab.Content = _clippingTooltab;
+        }
+
 
         private void ToggleAntialiasing_Click(object sender, RoutedEventArgs e)
         {
@@ -342,6 +363,47 @@ namespace ComputerGraphics_Rasterization
             }
         }
 
+        private void OnClipToClicked(object sender, RoutedEventArgs e)
+        {
+            var selected = ShapesListBox.SelectedItems.OfType<PolygonShape>().ToList();
+
+            if (selected.Count == 2)
+            {
+                var subject = selected[0];
+                var clipper = selected[1];
+
+                if (!clipper.IsClosed)
+                {
+                    MessageBox.Show("Clipping polygon must be closed.");
+                    return;
+                }
+
+                if (!clipper.IsConvex())
+                {
+                    MessageBox.Show("Clipping polygon must be convex for Sutherland-Hodgman algorithm.");
+                    return;
+                }
+
+                var clippedVertices = SutherlandHodgmanClipping.ClipPolygon(subject.Vertices, clipper.Vertices);
+
+                if (clippedVertices.Count >= 3)
+                {
+                    var result = new PolygonShape(subject.Color, subject.Thickness);
+                    foreach (var v in clippedVertices)
+                        result.AddVertex((int)v.X, (int)v.Y);
+                    result.Close();
+                    canvasService.AddShape(result);
+                    UpdateShapesList();
+                    canvasService.DrawAll();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select exactly 2 polygons (subject and clipper).");
+            }
+        }
+
+
         private void UpdateLineTooltab()
         {
             if (_lineTooltab != null)
@@ -509,6 +571,9 @@ namespace ComputerGraphics_Rasterization
 
         private void OnShapeSelected(object sender, SelectionChangedEventArgs e)
         {
+            if (_clippingTooltab != null)
+                return;
+
             if (ShapesListBox.SelectedItem is IShape shape)
             {
                 selectedShape = shape;

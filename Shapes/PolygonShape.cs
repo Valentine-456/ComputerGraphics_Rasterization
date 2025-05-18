@@ -157,5 +157,31 @@ namespace ComputerGraphics_Rasterization.Shapes
         {
             return $"Polygon {Vertices.Count()} vertices, Z-Index: {ZIndex}";
         }
+
+        public bool IsConvex()
+        {
+            if (Vertices.Count < 3) return false;
+
+            bool? sign = null;
+            int count = Vertices.Count;
+
+            for (int i = 0; i < count; i++)
+            {
+                var a = Vertices[i];
+                var b = Vertices[(i + 1) % count];
+                var c = Vertices[(i + 2) % count];
+
+                var cross = ((b.X - a.X) * (c.Y - a.Y)) - ((b.Y - a.Y) * (c.X - a.X));
+                if (cross == 0) continue;
+
+                if (sign == null)
+                    sign = cross > 0;
+                else if ((cross > 0) != sign)
+                    return false;
+            }
+
+            return true;
+        }
+
     }
 }

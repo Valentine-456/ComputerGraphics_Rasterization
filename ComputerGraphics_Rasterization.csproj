@@ -78,6 +78,9 @@
     <Compile Include="Controls\CircleTooltab.xaml.cs">
       <DependentUpon>CircleTooltab.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ClippingTooltab.xaml.cs">
+      <DependentUpon>ClippingTooltab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Events\CircleShapeUpdatedEventArgs.cs" />
     <Compile Include="Controls\Events\LineShapeUpdatedEventArgs.cs" />
     <Compile Include="Controls\Events\PolygonShapeUpdatedEventArgs.cs" />
@@ -98,6 +101,7 @@
     <Compile Include="RenderLogic\DDARenderer.cs" />
     <Compile Include="RenderLogic\GouptaSproullsRenderer.cs" />
     <Compile Include="RenderLogic\MidpointCircleRenderer.cs" />
+    <Compile Include="RenderLogic\SutherlandHodgmanClipping.cs" />
     <Compile Include="Services\CanvasService.cs" />
     <Compile Include="Services\DrawingMode.cs" />
     <Compile Include="Services\DrawingService.cs" />
@@ -111,6 +115,10 @@
     <Compile Include="Shapes\RectangleShape.cs" />
     <Compile Include="Shapes\RoundedRectangleShape.cs" />
     <Page Include="Controls\CircleTooltab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ClippingTooltab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
