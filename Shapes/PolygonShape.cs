@@ -111,7 +111,7 @@ namespace ComputerGraphics_Rasterization.Shapes
             return null;
         }
 
-        public void MoveHandle(int handleId, int newX, int newY)
+        public virtual void MoveHandle(int handleId, int newX, int newY)
         {
             if (handleId >= 0 && handleId < Vertices.Count)
             {

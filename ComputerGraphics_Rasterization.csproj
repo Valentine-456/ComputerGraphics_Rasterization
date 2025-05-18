@@ -88,6 +88,9 @@
     <Compile Include="Controls\PolygonTooltab.xaml.cs">
       <DependentUpon>PolygonTooltab.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\RectangleTooltab.xaml.cs">
+      <DependentUpon>RectangleTooltab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\RoundedRectangleTooltab.xaml.cs">
       <DependentUpon>RoundedRectangleTooltab.xaml</DependentUpon>
     </Compile>
@@ -105,6 +108,7 @@
     <Compile Include="Shapes\IShape.cs" />
     <Compile Include="Shapes\LineShape.cs" />
     <Compile Include="Shapes\PolygonShape.cs" />
+    <Compile Include="Shapes\RectangleShape.cs" />
     <Compile Include="Shapes\RoundedRectangleShape.cs" />
     <Page Include="Controls\CircleTooltab.xaml">
       <SubType>Designer</SubType>
@@ -115,6 +119,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PolygonTooltab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\RectangleTooltab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

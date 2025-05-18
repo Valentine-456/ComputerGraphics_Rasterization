@@ -57,6 +57,9 @@ namespace ComputerGraphics_Rasterization.Services
                         currentShape = new PolygonShape(selectedColor, thickness);
                         ((PolygonShape)currentShape).AddVertex((int)click.X, (int)click.Y);
                         break;
+                    case DrawingMode.Rectangle:
+                        currentShape = new RectangleShape(click, selectedColor, thickness);
+                        break;
                 }
             }
             else
@@ -81,6 +84,11 @@ namespace ComputerGraphics_Rasterization.Services
                             canvasService.AddShape(rounded);
                             currentShape = null;
                         }
+                        break;
+                    case RectangleShape rect:
+                        rect.UpdateCorner2(click);
+                        canvasService.AddShape(rect);
+                        currentShape = null;
                         break;
                     case PolygonShape polygon:
                         if (!polygon.IsClosed)

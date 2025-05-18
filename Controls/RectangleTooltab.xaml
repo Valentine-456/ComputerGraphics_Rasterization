@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="ComputerGraphics_Rasterization.Controls.RectangleTooltab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ComputerGraphics_Rasterization.Controls" 
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" 
+             Height="Auto" Width="Auto">
+    <StackPanel Margin="10">
+        <TextBlock Text="Rectangle Tool" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
+
+        <TextBlock Text="Edge Thickness:"/>
+        <Slider x:Name="ThicknessSlider" Minimum="1" Maximum="20" Value="1" TickFrequency="1" 
+                IsSnapToTickEnabled="True" Margin="0,0,0,10"/>
+
+        <xctk:ColorPicker x:Name="ColorPickerControl" SelectedColor="Black" Margin="0,10,0,0"/>
+
+        <Button Content="Delete Selected Rectangle" x:Name="DeleteButton" Margin="0,10,0,0"/>
+    </StackPanel>
+</UserControl>
