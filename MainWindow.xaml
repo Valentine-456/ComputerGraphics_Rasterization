@@ -34,6 +34,7 @@
                 <MenuItem Header="Polygon" Click="PolygonTooltab_Click"/>
                 <MenuItem Header="Rectangle" Click="RectangleTooltab_Click"/>
                 <MenuItem Header="Clipping tool" Click="ClippingTooltab_Click"/>
+                <MenuItem Header="Filling tool" Click="FillingTooltab_Click"/>
             </MenuItem>
             <MenuItem Header="View">
                 <MenuItem Header="Toggle Antialiasing" Click="ToggleAntialiasing_Click"/>

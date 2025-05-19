@@ -10,7 +10,7 @@ using ComputerGraphics_Rasterization.Services;
 
 namespace ComputerGraphics_Rasterization.Shapes
 {
-    internal class PolygonShape : IMovableShape
+    internal class PolygonShape : IFillableShape
     {
         public uint ZIndex { get; set; }
         public List<Point> Vertices { get; private set; } = new List<Point>();
@@ -191,77 +191,48 @@ namespace ComputerGraphics_Rasterization.Shapes
         public Color? FillColor { get; set; } = Colors.White;
         public string FillImagePath { get; set; } = null;
 
-        public void Fill(CanvasRenderer renderer)
+        public void Fill(CanvasRenderer renderer, Point? overrideSeed = null)
         {
-            if (!IsClosed || Vertices.Count < 3 || FillColor == null)
+            if (!IsFilled || !FillColor.HasValue)
                 return;
 
-            List<int> sortedIndices = Vertices
-                .Select((pt, idx) => new { pt, idx })
-                .OrderBy(v => v.pt.Y)
-                .Select(v => v.idx)
-                .ToList();
+            Point seed;
 
-            List<ActiveEdge> AET = new List<ActiveEdge>();
-
-            int k = 0;
-            int y = (int)Vertices[sortedIndices[0]].Y;
-            int ymax = (int)Vertices[sortedIndices[sortedIndices.Count - 1]].Y;
-
-            while (y <= ymax)
+            if (overrideSeed.HasValue)
             {
-                while (k < sortedIndices.Count && (int)Vertices[sortedIndices[k]].Y == y)
+                seed = overrideSeed.Value;
+            }
+            else
+            {
+                double avgX = Vertices.Average(v => v.X);
+                double avgY = Vertices.Average(v => v.Y);
+                Point seedCandidate = new Point((int)avgX, (int)avgY);
+
+                bool foundValidSeed = false;
+                for (int dy = -5; dy <= 5 && !foundValidSeed; dy++)
                 {
-                    int i = sortedIndices[k];
-                    int count = Vertices.Count;
-                    Point pi = Vertices[i];
-                    Point prev = Vertices[(i - 1 + count) % count];
-                    Point next = Vertices[(i + 1) % count];
-
-                    if ((int)prev.Y > (int)pi.Y)
-                        AET.Add(CreateEdge(pi, prev));
-                    if ((int)next.Y > (int)pi.Y)
-                        AET.Add(CreateEdge(pi, next));
-
-                    k++;
-                }
-
-                AET.RemoveAll(e => e.YMax == y);
-
-                AET.Sort((a, b) => a.X.CompareTo(b.X));
-
-                for (int i = 0; i + 1 < AET.Count; i += 2)
-                {
-                    int xStart = (int)Math.Round(AET[i].X);
-                    int xEnd = (int)Math.Round(AET[i + 1].X);
-                    for (int x = xStart; x <= xEnd; x++)
+                    for (int dx = -5; dx <= 5 && !foundValidSeed; dx++)
                     {
-                        renderer.SetPixel(x, y, FillColor.Value);
+                        int x = (int)(seedCandidate.X + dx);
+                        int y = (int)(seedCandidate.Y + dy);
+                        if (x < 0 || x >= renderer.Width || y < 0 || y >= renderer.Height)
+                            continue;
+
+                        var currentColor = renderer.GetPixel(x, y);
+                        if (currentColor != Color && currentColor != FillColor.Value)
+                        {
+                            seed = new Point(x, y);
+                            foundValidSeed = true;
+                        }
                     }
                 }
 
-                y++;
-                foreach (var edge in AET)
-                {
-                    edge.X += edge.InvSlope;
-                }
-            }
-        }
-
-
-        private ActiveEdge CreateEdge(Point p1, Point p2)
-        {
-            if (p1.Y > p2.Y)
-            {
-                Point temp = p1;
-                p1 = p2;
-                p2 = temp;
+                if (!foundValidSeed)
+                    return;
+                else seed = seedCandidate;
             }
 
-            double invSlope = (p2.Y - p1.Y) == 0 ? 0 : (p2.X - p1.X) / (p2.Y - p1.Y);
-            return new ActiveEdge(p1.X, invSlope, (int)p2.Y);
+            SmithScanLineFiller.Fill(renderer, seed, Color, FillColor.Value);
         }
-
-
     }
 }

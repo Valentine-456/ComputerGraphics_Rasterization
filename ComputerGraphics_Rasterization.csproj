@@ -85,6 +85,9 @@
     <Compile Include="Controls\Events\LineShapeUpdatedEventArgs.cs" />
     <Compile Include="Controls\Events\PolygonShapeUpdatedEventArgs.cs" />
     <Compile Include="Controls\Events\RoundedRectShapeUpdatedEventArgs.cs" />
+    <Compile Include="Controls\FillingTooltab.xaml.cs">
+      <DependentUpon>FillingTooltab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\LineTooltab.xaml.cs">
       <DependentUpon>LineTooltab.xaml</DependentUpon>
     </Compile>
@@ -102,6 +105,7 @@
     <Compile Include="RenderLogic\DDARenderer.cs" />
     <Compile Include="RenderLogic\GouptaSproullsRenderer.cs" />
     <Compile Include="RenderLogic\MidpointCircleRenderer.cs" />
+    <Compile Include="RenderLogic\SmithScanLineFiller.cs" />
     <Compile Include="RenderLogic\SutherlandHodgmanClipping.cs" />
     <Compile Include="Services\CanvasService.cs" />
     <Compile Include="Services\DrawingMode.cs" />
@@ -109,6 +113,7 @@
     <Compile Include="Services\FileOperationsService.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Shapes\CircleShape.cs" />
+    <Compile Include="Shapes\IFillableShape.cs" />
     <Compile Include="Shapes\IMovableShape.cs" />
     <Compile Include="Shapes\IShape.cs" />
     <Compile Include="Shapes\LineShape.cs" />
@@ -120,6 +125,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ClippingTooltab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\FillingTooltab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -13,6 +13,7 @@ namespace ComputerGraphics_Rasterization.Services
         Circle,
         RoundedRectangle,
         Polygon,
-        Rectangle
+        Rectangle,
+        Filling
     }
 }

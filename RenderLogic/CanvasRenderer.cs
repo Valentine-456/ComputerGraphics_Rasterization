@@ -79,5 +79,24 @@ namespace ComputerGraphics_Rasterization.RenderLogic
             }
             EndDraw();
         }
+
+        public int Width => writeableBitmap.PixelWidth;
+        public int Height => writeableBitmap.PixelHeight;
+
+        public Color GetPixel(int x, int y)
+        {
+            if (!isLocked)
+                throw new InvalidOperationException("BeginDraw must be called.");
+
+            if (x < 0 || x >= Width || y < 0 || y >= Height)
+                return Colors.Transparent;
+
+            unsafe
+            {
+                byte* pixel = (byte*)pBackBuffer + y * stride + x * 4;
+                return Color.FromRgb(pixel[2], pixel[1], pixel[0]);
+            }
+        }
+
     }
 }

@@ -41,6 +41,8 @@ namespace ComputerGraphics_Rasterization
         private PolygonTooltab _polygonTooltab = null;
         private RectangleTooltab _rectangleTooltab = null;
         private ClippingTooltab _clippingTooltab = null;
+        private FillingTooltab _fillingTooltab = null;
+
 
 
         public MainWindow()
@@ -100,6 +102,7 @@ namespace ComputerGraphics_Rasterization
             _polygonTooltab = null;
             _rectangleTooltab = null;
             _clippingTooltab = null;
+            _fillingTooltab = null;
 
             drawingService.SetDrawingMode(DrawingMode.Line);
 
@@ -117,6 +120,7 @@ namespace ComputerGraphics_Rasterization
             _polygonTooltab = null;
             _rectangleTooltab = null;
             _clippingTooltab = null;
+            _fillingTooltab = null;
 
             drawingService.SetDrawingMode(DrawingMode.Circle);
 
@@ -134,6 +138,7 @@ namespace ComputerGraphics_Rasterization
             _polygonTooltab = null;
             _rectangleTooltab = null;
             _clippingTooltab = null;
+            _fillingTooltab = null;
 
             drawingService.SetDrawingMode(DrawingMode.RoundedRectangle);
 
@@ -151,6 +156,7 @@ namespace ComputerGraphics_Rasterization
             _roundedRectangleTooltab = null;
             _rectangleTooltab = null;
             _clippingTooltab = null;
+            _fillingTooltab = null;
 
             drawingService.SetDrawingMode(DrawingMode.Polygon);
 
@@ -168,6 +174,7 @@ namespace ComputerGraphics_Rasterization
             _roundedRectangleTooltab = null;
             _polygonTooltab = null;
             _clippingTooltab = null;
+            _fillingTooltab = null;
 
             drawingService.SetDrawingMode(DrawingMode.Rectangle);
 
@@ -185,11 +192,26 @@ namespace ComputerGraphics_Rasterization
             _polygonTooltab = null;
             _roundedRectangleTooltab = null;
             _rectangleTooltab = null;
+            _fillingTooltab = null;
 
             _clippingTooltab = new ClippingTooltab();
             _clippingTooltab.ClipToButton.Click += OnClipToClicked;
             ToolTab.Content = _clippingTooltab;
         }
+        private void FillingTooltab_Click(object sender, RoutedEventArgs e)
+        {
+            ToolTab.Content = null;
+            _lineTooltab = null;
+            _circleTooltab = null;
+            _polygonTooltab = null;
+            _rectangleTooltab = null;
+            _roundedRectangleTooltab = null;
+            _clippingTooltab = null;
+
+            _fillingTooltab = new FillingTooltab();
+            ToolTab.Content = _fillingTooltab;
+        }
+
 
 
         private void ToggleAntialiasing_Click(object sender, RoutedEventArgs e)
@@ -207,6 +229,24 @@ namespace ComputerGraphics_Rasterization
                 _polygonTooltab?.SelectedColor ?? 
                 _roundedRectangleTooltab?.SelectedColor ??
                 Colors.Black;
+
+            if (_fillingTooltab != null)
+            {
+                var fillColor = _fillingTooltab.SelectedColor;
+
+                foreach (var shape in canvasService.Shapes.OfType<IFillableShape>())
+                {
+                    if (shape is IFillableShape fillable )
+                    {
+                        fillable.IsFilled = true;
+                        fillable.FillColor = fillColor;
+                        break;
+                    }
+                }
+
+                canvasService.DrawAll(drawingService.GetCurrentShape());
+                return;
+            }
 
             drawingService.HandleLeftClick(click, color, thickness);
 
