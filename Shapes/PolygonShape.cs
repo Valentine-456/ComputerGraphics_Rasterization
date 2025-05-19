@@ -82,6 +82,10 @@ namespace ComputerGraphics_Rasterization.Shapes
 
             if (IsClosed)
             {
+                if (IsFilled && FillColor.HasValue)
+                {
+                    Fill(renderer);
+                }
                 var first = Vertices[0];
                 var last = Vertices[Vertices.Count - 1];
                 if (SettingsService.IsAntialiasingEnabled)
@@ -182,6 +186,82 @@ namespace ComputerGraphics_Rasterization.Shapes
 
             return true;
         }
+
+        public bool IsFilled { get; set; } = false;
+        public Color? FillColor { get; set; } = Colors.White;
+        public string FillImagePath { get; set; } = null;
+
+        public void Fill(CanvasRenderer renderer)
+        {
+            if (!IsClosed || Vertices.Count < 3 || FillColor == null)
+                return;
+
+            List<int> sortedIndices = Vertices
+                .Select((pt, idx) => new { pt, idx })
+                .OrderBy(v => v.pt.Y)
+                .Select(v => v.idx)
+                .ToList();
+
+            List<ActiveEdge> AET = new List<ActiveEdge>();
+
+            int k = 0;
+            int y = (int)Vertices[sortedIndices[0]].Y;
+            int ymax = (int)Vertices[sortedIndices[sortedIndices.Count - 1]].Y;
+
+            while (y <= ymax)
+            {
+                while (k < sortedIndices.Count && (int)Vertices[sortedIndices[k]].Y == y)
+                {
+                    int i = sortedIndices[k];
+                    int count = Vertices.Count;
+                    Point pi = Vertices[i];
+                    Point prev = Vertices[(i - 1 + count) % count];
+                    Point next = Vertices[(i + 1) % count];
+
+                    if ((int)prev.Y > (int)pi.Y)
+                        AET.Add(CreateEdge(pi, prev));
+                    if ((int)next.Y > (int)pi.Y)
+                        AET.Add(CreateEdge(pi, next));
+
+                    k++;
+                }
+
+                AET.RemoveAll(e => e.YMax == y);
+
+                AET.Sort((a, b) => a.X.CompareTo(b.X));
+
+                for (int i = 0; i + 1 < AET.Count; i += 2)
+                {
+                    int xStart = (int)Math.Round(AET[i].X);
+                    int xEnd = (int)Math.Round(AET[i + 1].X);
+                    for (int x = xStart; x <= xEnd; x++)
+                    {
+                        renderer.SetPixel(x, y, FillColor.Value);
+                    }
+                }
+
+                y++;
+                foreach (var edge in AET)
+                {
+                    edge.X += edge.InvSlope;
+                }
+            }
+        }
+
+
+        private ActiveEdge CreateEdge(Point p1, Point p2)
+        {
+            if (p1.Y > p2.Y)
+            {
+                Point temp = p1;
+                p1 = p2;
+                p2 = temp;
+            }
+
+            double invSlope = (p2.Y - p1.Y) == 0 ? 0 : (p2.X - p1.X) / (p2.Y - p1.Y);
+            return new ActiveEdge(p1.X, invSlope, (int)p2.Y);
+        }
+
 
     }
 }

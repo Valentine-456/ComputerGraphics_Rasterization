@@ -11,6 +11,8 @@ namespace ComputerGraphics_Rasterization.Controls.Events
     {
         public int? Thickness { get; set; }
         public Color? Color { get; set; }
+        public bool IsFilled { get; set; }
+        public Color? FillColor { get; set; }
 
     }
 }

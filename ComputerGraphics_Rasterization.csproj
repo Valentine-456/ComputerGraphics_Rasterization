@@ -97,6 +97,7 @@
     <Compile Include="Controls\RoundedRectangleTooltab.xaml.cs">
       <DependentUpon>RoundedRectangleTooltab.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RenderLogic\ActiveEdge.cs" />
     <Compile Include="RenderLogic\CanvasRenderer.cs" />
     <Compile Include="RenderLogic\DDARenderer.cs" />
     <Compile Include="RenderLogic\GouptaSproullsRenderer.cs" />

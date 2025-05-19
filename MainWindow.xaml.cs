@@ -389,9 +389,13 @@ namespace ComputerGraphics_Rasterization
                 if (clippedVertices.Count >= 3)
                 {
                     var result = new PolygonShape(subject.Color, subject.Thickness);
+                    result.IsFilled = false;
+                    result.FillColor = Colors.White;
+
                     foreach (var v in clippedVertices)
                         result.AddVertex((int)v.X, (int)v.Y);
                     result.Close();
+                    
                     canvasService.AddShape(result);
                     UpdateShapesList();
                     canvasService.DrawAll();
@@ -439,7 +443,7 @@ namespace ComputerGraphics_Rasterization
             {
                 if (selectedShape is PolygonShape polygon)
                 {
-                    _polygonTooltab.SetValues(polygon.Thickness, polygon.Color);
+                    _polygonTooltab.SetValues(polygon.Thickness, polygon.Color, polygon.IsFilled, polygon.FillColor);
                 }
                 else
                 {
@@ -542,6 +546,9 @@ namespace ComputerGraphics_Rasterization
                     polygon.Thickness = e.Thickness.Value;
                 if (e.Color.HasValue)
                     polygon.Color = e.Color.Value;
+                if (e.IsFilled)
+                    polygon.IsFilled = true;
+                    polygon.FillColor = e.FillColor.Value;
 
                 canvasService.DrawAll();
             }
